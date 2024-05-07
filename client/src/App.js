@@ -10,6 +10,7 @@ import {
 } from "arwes";
 
 import AppLayout from "./pages/AppLayout";
+import { AuthProvider } from "./components/auth_context";
 
 import { theme, resources, sounds } from "./settings";
 
@@ -19,7 +20,9 @@ const App = () => {
       <Arwes animate background={resources.background.large} pattern={resources.pattern}>
         {anim => (
           <Router>
-            <AppLayout show={anim.entered} />
+            <AuthProvider>
+              <AppLayout show={anim.entered} />
+            </AuthProvider>
           </Router>
         )}
       </Arwes>

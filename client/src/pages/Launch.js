@@ -2,6 +2,9 @@ import { useMemo } from "react";
 import { Appear, Button, Loading, Paragraph } from "arwes";
 import Clickable from "../components/Clickable";
 
+import { Route, Redirect } from 'react-router-dom';
+import { useAuth } from "../components/auth_context";
+
 const Launch = props => {
   const selectorBody = useMemo(() => {
     return props.planets?.map(planet => 
@@ -10,6 +13,12 @@ const Launch = props => {
   }, [props.planets]);
 
   const today = new Date().toISOString().split("T")[0];
+
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <Redirect to="/auth" />;
+  }
 
   return <Appear id="launch" animate show={props.entered}>
     <Paragraph>Schedule a mission launch for interstellar travel to one of the Kepler Exoplanets.</Paragraph>
