@@ -19,7 +19,7 @@ async function startServer(){
     await load_launch_data();
 
     
-    server.listen(PORT, ()=>{
+    server.listen(PORT, '0.0.0.0', ()=>{
         console.log(`Listening on port ${PORT}...`);
     });
 }
