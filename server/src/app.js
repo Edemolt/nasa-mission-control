@@ -9,10 +9,11 @@ const app = express();
 
 // Use the cors middleware to allow requests from http://localhost:3000
 app.use(cors({
-  origin: 'http://localhost:3000', // Allow requests from this origin
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
-  credentials: true // Allow cookies (if you're using them)
+  origin: ['http://localhost:3000', 'http://13.233.119.128:8000'], // Allow multiple origins
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
 }));
+
 
 app.use(morgan('combined'));
 

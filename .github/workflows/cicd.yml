@@ -1,0 +1,49 @@
+name: CICD
+
+on:
+  push:
+    branches: 
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout Source
+        uses: actions/checkout@v3
+
+      # Step 2: Log in to DockerHub using secrets
+      - name: Login to DockerHub
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      # Step 3: Build the Docker image
+      - name: Build Docker Image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/nasa-project:latest .
+
+      # Step 4: Push the Docker image to DockerHub
+      - name: Publish image to DockerHub
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/nasa-project:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps: 
+      # Step 1: Install SSH client to connect to EC2
+      - name: Install SSH client
+        run: sudo apt-get install openssh-client
+
+      # Step 2: Deploy to EC2
+      - name: SSH and Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i "${{ secrets.EC2_SSH_KEY }}" ec2-user@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
+            # Pull the latest Docker image from DockerHub
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/nasa-project:latest
+
+            # Stop and remove the old container if it exists
+            docker rm -f nasa-project || true
+
+            # Run the new container
+            docker run -d -p 8000:8000 --name nasa-project ${{ secrets.DOCKERHUB_USERNAME }}/nasa-project:latest
+          EOF
