@@ -1,4 +1,4 @@
-const API_URL = 'http://13.233.199.127:8000/v1';
+const API_URL = 'http://13.233.199.127:8000';
 
 async function httpGetPlanets() {
   // TODO: Once API is ready.
